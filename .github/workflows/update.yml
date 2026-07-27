@@ -1,0 +1,43 @@
+name: Update inputs
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  repository_dispatch:
+    types:
+      - spotx-bash-updated
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+
+      - name: Update SpotX-Bash and Nixpkgs
+        run: nix flake update
+
+      - name: Check version compatibility
+        id: compatibility
+        run: ./scripts/check-compatibility.sh
+
+      - name: Build SpotX Spotify
+        if: steps.compatibility.outputs.supported == 'true'
+        run: nix build .#spotify-spotx --no-link --print-build-logs
+
+      - name: Commit updated inputs
+        if: steps.compatibility.outputs.supported == 'true'
+        run: |
+          git add flake.lock
+          git diff --cached --quiet && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update SpotX-Bash and Nixpkgs inputs"
+          git push

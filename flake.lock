@@ -1,0 +1,44 @@
+{
+  "nodes": {
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1785090369,
+        "narHash": "sha256-m0pDuRJG7EDo9ri+4Ksu83VsI+PlxNC9lNBfydejce4=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "624af665418d3c65d544145b4d34ad696439570e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nixpkgs": "nixpkgs",
+        "spotx-bash": "spotx-bash"
+      }
+    },
+    "spotx-bash": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1785173382,
+        "narHash": "sha256-xcd73EDa5vSQw8EHt+deXvE1M6xkBElXB/8poKoTDe8=",
+        "owner": "SpotX-Official",
+        "repo": "SpotX-Bash",
+        "rev": "b350dbe57d016fb561582b1e2b43f8983b5bbf8a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "SpotX-Official",
+        "repo": "SpotX-Bash",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
