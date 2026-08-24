@@ -16,30 +16,40 @@
       spotx-bash,
     }:
     let
-      system = "x86_64-linux";
-      pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfreePredicate =
-          pkg:
-          builtins.elem (nixpkgs.lib.getName pkg) [
-            "spotify"
-            "spotify-spotx"
-          ];
-        overlays = [ self.overlays.default ];
-      };
+      systems = [
+        "x86_64-linux"
+        "aarch64-darwin"
+      ];
+      eachSystem = nixpkgs.lib.genAttrs systems;
+      pkgs = eachSystem (
+        system:
+        import nixpkgs {
+          inherit system;
+          config.allowUnfreePredicate =
+            pkg:
+            builtins.elem (nixpkgs.lib.getName pkg) [
+              "spotify"
+              "spotify-spotx"
+            ];
+          overlays = [ self.overlays.default ];
+        }
+      );
     in
     {
       overlays.default = final: prev: {
         spotify-spotx = final.callPackage ./nix/package.nix {
+          inherit (final.darwin) DarwinTools sigtool system_cmds;
           spotxSource = spotx-bash;
         };
       };
 
-      packages.${system} = {
-        inherit (pkgs) spotify-spotx;
-        default = pkgs.spotify-spotx;
-      };
+      packages = eachSystem (system: {
+        inherit (pkgs.${system}) spotify-spotx;
+        default = pkgs.${system}.spotify-spotx;
+      });
 
-      checks.${system}.default = pkgs.spotify-spotx;
+      checks = eachSystem (system: {
+        default = pkgs.${system}.spotify-spotx;
+      });
     };
 }
