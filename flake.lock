@@ -25,11 +25,11 @@
     "spotx-bash": {
       "flake": false,
       "locked": {
-        "lastModified": 1787762326,
-        "narHash": "sha256-uvJVp/aiHQIJKlM7raYhKX/9J3tbTpgvIWD/pFutluM=",
+        "lastModified": 1787789342,
+        "narHash": "sha256-kfjjHHu/17YatuuTDWzPZowEUdKFnfWe8Bq+FNfdDoY=",
         "owner": "SpotX-Official",
         "repo": "SpotX-Bash",
-        "rev": "b876e509a2063ffa595a75cdba0f5e375035e453",
+        "rev": "230b7510ff28cf2b019be362def8c8c804770516",
         "type": "github"
       },
       "original": {
