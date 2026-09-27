@@ -38,7 +38,6 @@
     {
       overlays.default = final: prev: {
         spotify-spotx = final.callPackage ./nix/package.nix {
-          inherit (final.darwin) DarwinTools sigtool system_cmds;
           spotxSource = spotx-bash;
         };
       };
