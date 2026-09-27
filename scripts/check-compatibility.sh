@@ -2,6 +2,15 @@
 
 set -euo pipefail
 
+system="${1:-${NIX_SYSTEM:-x86_64-linux}}"
+case "${system}" in
+  x86_64-linux|aarch64-darwin) ;;
+  *)
+    echo "Unsupported system: ${system}" >&2
+    exit 1
+    ;;
+esac
+
 version_key() {
   local version="${1%%.g*}" major minor patch build
   IFS='.' read -r major minor patch build <<< "${version}"
@@ -12,14 +21,15 @@ version_key() {
     "$((10#${build:-0}))"
 }
 
-spotxVersion="${SPOTX_VERSION_OVERRIDE:-$(nix eval --raw '.#packages.x86_64-linux.spotify-spotx.spotxVersion')}"
-spotifyVersion="${SPOTIFY_VERSION_OVERRIDE:-$(nix eval --raw '.#packages.x86_64-linux.spotify-spotx.spotifyVersion')}"
+spotxVersion="${SPOTX_VERSION_OVERRIDE:-$(nix eval --raw ".#packages.${system}.spotify-spotx.spotxVersion")}"
+spotifyVersion="${SPOTIFY_VERSION_OVERRIDE:-$(nix eval --raw ".#packages.${system}.spotify-spotx.spotifyVersion")}"
 spotxKey=$(version_key "${spotxVersion}")
 spotifyKey=$(version_key "${spotifyVersion}")
 supported='true'
 [[ "${spotxKey}" < "${spotifyKey}" ]] && supported='false'
 echo "SpotX-Bash supports: ${spotxVersion}"
 echo "Nixpkgs provides:    ${spotifyVersion}"
+echo "System:              ${system}"
 echo "Compatible:          ${supported}"
 [[ -n "${GITHUB_OUTPUT:-}" ]] && {
   echo "spotx-version=${spotxVersion}" >> "${GITHUB_OUTPUT}"

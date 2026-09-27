@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 jobs:
-  update:
+  prepare:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
@@ -25,15 +25,85 @@ jobs:
         run: nix flake update
 
       - name: Check version compatibility
-        id: compatibility
-        run: ./scripts/check-compatibility.sh
+        env:
+          REQUIRE_SUPPORTED: "true"
+        run: |
+          ./scripts/check-compatibility.sh x86_64-linux
+          ./scripts/check-compatibility.sh aarch64-darwin
+
+      - name: Upload updated lock file
+        uses: actions/upload-artifact@v4
+        with:
+          name: updated-flake-lock
+          path: flake.lock
+          retention-days: 1
+
+  build-linux:
+    needs: prepare
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+
+      - name: Download updated lock file
+        uses: actions/download-artifact@v5
+        with:
+          name: updated-flake-lock
+          path: .updated-inputs
+
+      - name: Apply updated lock file
+        run: cp .updated-inputs/flake.lock flake.lock
 
       - name: Build SpotX Spotify
-        if: steps.compatibility.outputs.supported == 'true'
-        run: nix build .#spotify-spotx --no-link --print-build-logs
+        run: nix build .#packages.x86_64-linux.spotify-spotx --no-link --print-build-logs
+
+  build-darwin:
+    needs: prepare
+    runs-on: macos-15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+
+      - name: Download updated lock file
+        uses: actions/download-artifact@v5
+        with:
+          name: updated-flake-lock
+          path: .updated-inputs
+
+      - name: Apply updated lock file
+        run: cp .updated-inputs/flake.lock flake.lock
+
+      - name: Build SpotX Spotify
+        run: nix build .#packages.aarch64-darwin.spotify-spotx --print-build-logs
+
+      - name: Verify Darwin application
+        run: ./scripts/check-darwin-app.sh
+
+  commit:
+    needs:
+      - build-linux
+      - build-darwin
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Download updated lock file
+        uses: actions/download-artifact@v5
+        with:
+          name: updated-flake-lock
+          path: .updated-inputs
+
+      - name: Apply updated lock file
+        run: cp .updated-inputs/flake.lock flake.lock
 
       - name: Commit updated inputs
-        if: steps.compatibility.outputs.supported == 'true'
         run: |
           git add flake.lock
           git diff --cached --quiet && exit 0
