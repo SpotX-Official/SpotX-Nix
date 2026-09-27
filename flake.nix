@@ -2,6 +2,10 @@
   description = "Declarative Nix package for SpotX-Bash";
 
   inputs = {
+    flake-compat = {
+      url = "github:NixOS/flake-compat";
+      flake = false;
+    };
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     spotx-bash = {
       url = "github:SpotX-Official/SpotX-Bash";
@@ -12,6 +16,7 @@
   outputs =
     {
       self,
+      flake-compat,
       nixpkgs,
       spotx-bash,
     }:

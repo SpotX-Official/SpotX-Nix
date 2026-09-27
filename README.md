@@ -86,6 +86,36 @@ Use the overlay and add the package to `home.packages`:
 }
 ```
 
+## Without flakes
+
+Import the repository through its root `default.nix`, then use the same overlay and package as the flake setup:
+
+```nix
+{ lib, pkgs, ... }:
+let
+  spotx-nix = import (builtins.fetchTarball {
+    url = "https://github.com/SpotX-Official/SpotX-Nix/archive/main.tar.gz";
+  });
+in
+{
+  nixpkgs = {
+    config.allowUnfreePredicate =
+      pkg:
+      builtins.elem (lib.getName pkg) [
+        "spotify"
+        "spotify-spotx"
+      ];
+    overlays = [ spotx-nix.overlays.default ];
+  };
+
+  environment.systemPackages = [ pkgs.spotify-spotx ];
+}
+```
+
+This works with a traditional NixOS configuration and does not require the `nix-command` or `flakes` experimental features. Replace `main` with a full SpotX-Nix commit and add its `sha256` when a reproducible source pin is required.
+
+The imported `default.nix` uses the repository's `flake.lock`, so SpotX-Bash and the default Nixpkgs package remain pinned together. You do not need to fetch SpotX-Bash separately.
+
 ## SpotX-Bash options
 
 Customize the package by passing regular SpotX-Bash arguments:
