@@ -11,8 +11,10 @@
   util-linux,
   zip,
   spotxSource,
+  DarwinTools,
   rcodesign,
   stdenv,
+  system_cmds,
   spotxArgs ? [ ],
 }:
 let
@@ -55,10 +57,14 @@ spotify.overrideAttrs (old: {
       gnused
       perl
       unzip
+      util-linux
       zip
     ]
-    ++ lib.optionals isDarwin [ rcodesign ]
-    ++ lib.optionals (!isDarwin) [ util-linux ];
+    ++ lib.optionals isDarwin [
+      DarwinTools
+      rcodesign
+      system_cmds
+    ];
 
   postInstall =
     assert lib.assertMsg (lib.versionAtLeast spotxVersionNumber spotifyVersionNumber) ''
