@@ -18,11 +18,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1790689126,
-        "narHash": "sha256-ilerN1WLSvF+HMjziC/Wv99J5y02maDH+6hZPwsORKg=",
+        "lastModified": 1790822859,
+        "narHash": "sha256-69xHQhAeMAD2wDXO7T2pcOZIF9Sga2W+JkmY2a11Ops=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "b4fd65b198c599cbe814fcb9f42d25d021595ec9",
+        "rev": "c59305bab2065cfecc4944690d9eedbb56f3a9fa",
         "type": "github"
       },
       "original": {
@@ -42,11 +42,11 @@
     "spotx-bash": {
       "flake": false,
       "locked": {
-        "lastModified": 1790630606,
-        "narHash": "sha256-2qrjbTAvllcCPEalBcZWPEp6mT17V1myMCPKAGp1u0g=",
+        "lastModified": 1790880486,
+        "narHash": "sha256-PJ1oEaUi5VAGCc31UWFElmdPvKiL2N/C9bf5fQwihrc=",
         "owner": "SpotX-Official",
         "repo": "SpotX-Bash",
-        "rev": "1538ecf26b781e1bc6486fe4360ef51bd4d402d7",
+        "rev": "7489197f343aaa76fd99beff85f7325b62e0cbcc",
         "type": "github"
       },
       "original": {
